@@ -1,11 +1,11 @@
 MiscConstants = {}
 
-MiscConstants.TRACKER_VERSION = "6.3.7"
+MiscConstants.TRACKER_VERSION = "6.3.8"
 
 MiscConstants.BIZHAWK_VERSION = client.getversion()
 
 MiscConstants.UPDATE_NOTES = {
-    "-- Removed some Bizhawk 2.10 specific code due to bugginess."
+    "-- Fixed several incorrect routes and crashes for the Log Viewer when playing Diamond/Pearl."
 }
 
 MiscConstants.DEFAULT_SETTINGS = {

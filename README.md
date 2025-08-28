@@ -14,7 +14,7 @@ Will only work with a Triple Bond patch on Pokemon HeartGold.
 
 # Other problems
 
-I've modified this so any bugs will most likely be my fault. There is a FAQ section on the original page that might help with more common errors: [https://github.com/Brian0255/NDS-Ironmon-Tracker#FAQ](https://github.com/Brian0255/NDS-Ironmon-Tracker#FAQ) **OTHERWISE PLEASE DO NOT BOTHER THEM FOR HELP SINCE I'VE MODIFIED THIS** You're better off using the original tracker if you're not playing the Triple Bond Challenge.
+I've modified this so any bugs will most likely be my fault. There is a FAQ section on the original page that might help with more common errors: [https://github.com/Brian0255/NDS-Ironmon-Tracker#FAQ](https://github.com/Brian0255/NDS-Ironmon-Tracker#FAQ) **OTHERWISE PLEASE DO NOT BOTHER THEM FOR HELP SINCE I'VE MODIFIED THIS.** You're better off using the original tracker if you're not playing the Triple Bond Challenge.
 
 
 ----

@@ -31,9 +31,10 @@ MiscConstants.DEFAULT_SETTINGS = {
         LOAD_NEXT_SEED = "A B Start Select",
         CYCLE_STAT = "L",
         CYCLE_PREDICTION = "R",
-        LOCK_ENEMY = "Select",
+        LOCK_ENEMY = "Y",
         LEFT_EFFECTIVENESS = "L",
-        RIGHT_EFFECTIVENESS = "R"
+        RIGHT_EFFECTIVENESS = "R",
+        CYCLE_PARTY = "Select"
     },
     battle = {
         AUTO_SWAP_TO_ENEMY = false,

@@ -21,7 +21,7 @@ local function TrackerSetupScreen(initialSettings, initialTracker, initialProgra
             "CHANGE_VIEW",
             "CYCLE_STAT",
             "CYCLE_PREDICTION",
-            "LOCK_ENEMY"
+            "CYCLE_PARTY"
         },
         MAIN_FRAME_HEIGHT = 211,
         CONTROL_EDIT_FRAME_HEIGHT = 159,

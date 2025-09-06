@@ -445,8 +445,8 @@ local function Program(initialTracker, initialMemoryAddresses, initialGameInfo, 
 		tracker.setRunOver()
 	end
 
-	local function getPlayerPartyData()
-		local slot = battleHandler:getPlayerSlotIndex()
+	local function getPlayerPartyData(indexOffset)
+		local slot = battleHandler:getPlayerSlotIndex() + (indexOffset or 0)
 		local offset = (slot - 1) * gameInfo.ENCRYPTED_POKEMON_SIZE
 		pokemonDataReader.setCurrentBase(memoryAddresses.playerBase + offset)
 		local data = pokemonDataReader.decryptPokemonInfo(true, 0, false)
@@ -498,9 +498,10 @@ local function Program(initialTracker, initialMemoryAddresses, initialGameInfo, 
 
 	local function getPokemonData(selected)
 		if battleHandler:inBattleAndFetched() then
-			local data = battleHandler:getActivePokemonInBattle(selected)
+			local data = battleHandler:getActivePokemonInBattle(selected) -- Getting pokemon data while in battle
 			return data
 		else
+			-- Getting pokemon data outside of battle
 			return getPlayerPartyData()
 		end
 	end
@@ -804,26 +805,59 @@ local function Program(initialTracker, initialMemoryAddresses, initialGameInfo, 
 			resetMainScreenHover()
 		end
 	end
-
-	local function switchPokemonView()
+-- Done for now? This is called by the Start Button
+	local function switchPokemonViewToEnemy()
 		local blockingScreenActive = inTrackedPokemonView or inLockedView
 		local lockingActive = (locked and lockedPokemonCopy ~= nil)
+
+		if not battleHandler:isInBattle() then
+			print("Not in battle! Pressing start does nothing.")
+			return
+		end
+
 		if not blockingScreenActive then
 			if not battleHandler:isAllowedToSwap() then
+				--Pokemon are not out yet
 				return
 			end
 			if selectedPlayer == self.SELECTED_PLAYERS.PLAYER then
 				selectedPlayer = battleHandler:updatePlayerSlotIndex(selectedPlayer)
 				local pokemon = getPlayerPartyData()
-				if pokemon == nil or next(pokemon) == nil then
-					battleHandler:setPlayerSlotIndex(1)
-				end
+				print("Switched a view from START button")
 			else
 				if locked then
 					selectedPlayer = self.SELECTED_PLAYERS.PLAYER
 				else
 					selectedPlayer = battleHandler:updateEnemySlotIndex(selectedPlayer)
+					print("Switched from enemy to player mon in battle")
 				end
+			end
+			readMemory()
+			resetMainScreenHover()
+		end
+	end
+
+-- Specifically for switching through player party
+	local function switchPokemonViewForParty()
+		local blockingScreenActive = inTrackedPokemonView or inLockedView
+		local lockingActive = (locked and lockedPokemonCopy ~= nil)
+		if not blockingScreenActive then
+			if not battleHandler:isAllowedToSwap() then
+				--Pokemon are not out yet
+				return
+			end
+			if selectedPlayer == self.SELECTED_PLAYERS.PLAYER then
+				selectedPlayer = battleHandler:updatePlayerSlotIndex(selectedPlayer) --Is it here?
+				local pokemon = getPlayerPartyData()
+				--print("Pokemon: ", pokemon)
+				print("Switched a view from Select button")
+				if pokemon == nil or next(pokemon) == nil then --Maybe do a check to see the amount of mons in the party are?
+					battleHandler:setPlayerSlotIndex(1)
+					print("Switched back to 1st slot outside of battle?")
+				end
+			else
+				selectedPlayer = self.SELECTED_PLAYERS.PLAYER
+				print("Make selected player PLAYER")
 			end
 			readMemory()
 			resetMainScreenHover()
@@ -855,8 +889,12 @@ local function Program(initialTracker, initialMemoryAddresses, initialGameInfo, 
 	end
 
 	local eventListeners = {
-		JoypadEventListener(settings.controls, "CHANGE_VIEW", switchPokemonView),
-		JoypadEventListener(settings.controls, "LOCK_ENEMY", onLockButtonPress)
+		JoypadEventListener(settings.controls, "CHANGE_VIEW", switchPokemonViewToEnemy),
+		JoypadEventListener(settings.controls, "LOCK_ENEMY", onLockButtonPress),
+
+		-- NEW: cycle party everywhere (overworld and battle) without touching battle slots
+		JoypadEventListener(settings.controls, "CYCLE_PARTY", switchPokemonViewForParty),
+
 	}
 
 	function self.setCurrentScreens(newScreens)

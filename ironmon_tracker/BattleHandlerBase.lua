@@ -280,6 +280,7 @@ function BattleHandlerBase:_updateSlotIndex(isEnemy, limit)
         self._battleData["enemy"].slotIndex = 1
         return switchTo
     else
+        --For outside of battle
         battleData.slotIndex = battleData.slotIndex + 1
     end
     return nil
@@ -287,12 +288,17 @@ end
 
 function BattleHandlerBase:updatePlayerSlotIndex(currentSelectedPlayer)
     if self._inBattle and not self._battleDataFetched then
+        --scenario doesn't seem to ever happen
         return currentSelectedPlayer
     end
     local limit = #self._battleData["player"].slots
-    if self._settings.battle.DOUBLES_MODE and not self._inBattle then
-        limit = 2
+    if self._settings.battle.DOUBLES_MODE and not self._inBattle then -- NEW TODO: Change limit to 6 and take out if doubles mode or rename it??
+        --This limit only happens when outside of battle
+        limit = 6
     end
+
+    --Currently hits here when pressing select on 1st mon and then goes to enemy. whatever this is returning is making it change back to player.
+    --Want this to be called still if a player happens to press Start to see enemy.
     return self:_updateSlotIndex(false, limit) or currentSelectedPlayer
 end
 
@@ -302,10 +308,12 @@ function BattleHandlerBase:updateEnemySlotIndex(currentSelectedPlayer)
 end
 
 function BattleHandlerBase:setPlayerSlotIndex(newIndex)
+    print("Setting player slot index?")
     self._battleData["player"].slotIndex = newIndex
 end
 
 function BattleHandlerBase:getPlayerSlotIndex()
+    --Actual slots for party data
     return self._battleData["player"].slotIndex or 1
 end
 

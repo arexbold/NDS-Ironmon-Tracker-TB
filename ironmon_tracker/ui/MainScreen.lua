@@ -1005,8 +1005,66 @@ local function MainScreen(initialSettings, initialTracker, initialProgram)
         ui.controls.pokemonType2.setVisibility(not randomBallPickerActive)
     end
 
+    -- Update all elements of the party bar
+    local function updatePartyBar()
+        local party = program.getPartyBarMons and program.getPartyBarMons() or {}
+        local currentIconSet = IconSets.SETS[settings.appearance.ICON_SET_INDEX]
+        for i = 1, 3 do
+            local iconLabel = ui.controls["partyIcon" .. i]
+            local mon = party[i]
+            local isHighlighted = false
+            if mon and mon.pokemonID and mon.pokemonID ~= 0 then
+                DrawingUtils.readPokemonIDIntoImageLabel(currentIconSet, mon.pokemonID, iconLabel, false)
+                iconLabel.setVisibility(true)
+                -- Highlight if this is the currently viewed mon
+                if currentPokemon and mon.pokemonID == currentPokemon.pokemonID then
+                    isHighlighted = true
+                end
+                -- Put HP bar under icon
+                local hpPercent = 0
+                if mon.curHP and mon.stats and mon.stats.HP and mon.stats.HP > 0 then
+                    hpPercent = math.max(0, math.min(1, mon.curHP / mon.stats.HP))
+                end
+                local pos = iconLabel.getPosition()
+                local barY = pos.y + iconLabel.getSize().height + 4
+                local barX = pos.x
+                local barWidth = iconLabel.getSize().width
+                local barHeight = 4
+
+                -- Bar color for HP percentage
+                local barColor
+                if hpPercent >= 0.5 then
+                    barColor = 0xFF00FF00 -- green
+                elseif hpPercent > 0.19 then
+                    barColor = 0xFFFFFF00 -- yellow
+                else
+                    barColor = 0xFFFF0000 -- red
+                end
+
+                -- Backing for HP bar
+                gui.drawRectangle(barX, barY, barWidth, barHeight, 0xFF444444, 0xFF444444)
+                -- HP bar
+                gui.drawRectangle(barX, barY, math.floor(barWidth * hpPercent), barHeight, barColor, barColor)
+
+                -- Put yellow outline around icon if highlighted
+                if isHighlighted then
+                    gui.drawRectangle(
+                        pos.x - 2, pos.y + 6,
+                        iconLabel.getSize().width + 4, iconLabel.getSize().height + 4,
+                        0xFFFFFF00, -- yellow
+                        nil         -- makes it NOT fill box
+                    )
+                end
+            else
+                DrawingUtils.readPokemonIDIntoImageLabel(currentIconSet, 0, iconLabel, false)
+                iconLabel.setVisibility(true)
+            end
+        end
+    end
+
     function self.show()
         self.updateBadgeLayout()
+        updatePartyBar()
         readPokemonIntoUI()
         setUpBasedOnRandomBallPicker()
         ui.frames.mainFrame.show()

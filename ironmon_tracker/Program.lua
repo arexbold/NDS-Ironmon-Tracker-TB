@@ -466,6 +466,20 @@ local function Program(initialTracker, initialMemoryAddresses, initialGameInfo, 
 		return data
 	end
 
+	-- Get the first three party mons for the party bar
+	function self.getPartyBarMons()
+		local mons = {}
+		local inBattle = self.isInBattle and self.isInBattle()
+		local base = inBattle and memoryAddresses.playerBattleBase or memoryAddresses.playerBase 
+		for i = 1, 3 do
+			local offset = (i - 1) * gameInfo.ENCRYPTED_POKEMON_SIZE
+			pokemonDataReader.setCurrentBase(base + offset)
+			local data = pokemonDataReader.decryptPokemonInfo(true, 0, false)
+			table.insert(mons, data)
+		end
+		return mons
+	end
+
 	function self.checkForAlternateForm(pokemon)
 		local data = PokemonData.POKEMON[pokemon.pokemonID + 1]
 		local genderForms = {["Unfezant M"] = true, ["Frillish M"] = true, ["Jellicent M"] = true}

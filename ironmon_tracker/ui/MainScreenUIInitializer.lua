@@ -336,6 +336,20 @@ local function MainScreenUIInitializer(ui, gameInfo)
             Layout(Graphics.ALIGNMENT_TYPE.HORIZONTAL, 1, {x = 3, y = 2}),
             ui.frames.mainFrame
         )
+
+        -- Party bar frame
+        ui.frames.partyBarFrame = 
+            Frame(
+            Box(
+                {x = 100, y = ui.frames.badgeFrame1.getPosition().y + ui.frames.badgeFrame1.getSize().height + 6},
+                {width = constants.BADGE_HORIZONTAL_WIDTH, height = 35}
+                -- TODO: Add this back after figuring out how to get hp bar and highlight on top of it
+                -- "Bottom box background color",
+                -- "Bottom box border color"
+            ),
+            Layout(Graphics.ALIGNMENT_TYPE.HORIZONTAL, 6, {x = 20, y = 0}),
+            ui.frames.mainFrame
+        )
     end
 
     function self.initMoveInfo()
@@ -843,6 +857,37 @@ local function MainScreenUIInitializer(ui, gameInfo)
                     "Main background color"
                 )
             )
+        )
+        -- Add party icons below
+        local badgeFrame = ui.frames.badgeFrame1
+        local iconWidth, iconHeight = 30, 28
+        local iconSpacing = 6
+        local baseX = 10
+        local baseY = badgeFrame.getPosition().y + badgeFrame.getSize().height + 6
+
+        ui.controls.partyIcon1 = 
+            ImageLabel(
+            Component(
+                ui.frames.partyBarFrame, 
+                Box({x = baseX, y = baseY}, {width = iconWidth, height = iconHeight})
+            ),
+            ImageField("ironmon_tracker/images/pokemonIcons/1.png", {x = 0, y = 0}, nil)
+        )
+        ui.controls.partyIcon2 = 
+            ImageLabel(
+            Component(
+                ui.frames.partyBarFrame, 
+                Box({x = baseX + iconWidth + iconSpacing, y = baseY}, {width = iconWidth, height = iconHeight})
+            ),
+            ImageField("ironmon_tracker/images/pokemonIcons/1.png", {x = 0, y = 0}, nil)
+        )
+        ui.controls.partyIcon3 = 
+            ImageLabel(
+            Component(
+                ui.frames.partyBarFrame, 
+                Box({x = baseX + 2 * (iconWidth + iconSpacing), y = baseY}, {width = iconWidth, height = iconHeight})
+            ),
+            ImageField("ironmon_tracker/images/pokemonIcons/1.png", {x = 0, y = 0}, nil)
         )
     end
 

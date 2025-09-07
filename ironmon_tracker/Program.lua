@@ -88,6 +88,8 @@ local function Program(initialTracker, initialMemoryAddresses, initialGameInfo, 
 
 	local currentScreens = {}
 
+	local inBattlePartyCycle = false -- Flag to indicate if cycling through party in battle
+
 	function self.getGameInfo()
 		return gameInfo
 	end
@@ -498,10 +500,33 @@ local function Program(initialTracker, initialMemoryAddresses, initialGameInfo, 
 
 	local function getPokemonData(selected)
 		if battleHandler:inBattleAndFetched() then
-			local data = battleHandler:getActivePokemonInBattle(selected) -- Getting pokemon data while in battle
-			return data
+			if inBattlePartyCycle and selected == self.SELECTED_PLAYERS.PLAYER then
+				-- If the selected slot is the active slot, exit party cycle mode
+				local activeBattleSlot = 1
+				if battleHandler._battleData and battleHandler._battleData["player"] then
+					activeBattleSlot = battleHandler._battleData["player"].slotIndex or 1
+				end
+				local selectedSlot = battleHandler:getPlayerSlotIndex()
+				if selectedSlot == activeBattleSlot then
+					inBattlePartyCycle = false
+					local activeData = battleHandler:getActivePokemonInBattle(selected)
+					if activeData ~= nil then
+						return activeData
+					end
+				end
+				-- If not the active slot, or activeData is nil, return party data
+				return getPlayerPartyData()
+			end
+			
+			-- Only for Start button or normal battle switching
+			local activeData = battleHandler:getActivePokemonInBattle(selected)
+			if activeData ~= nil then
+				return activeData
+			else
+				-- Fallback to party data if activeData is nil
+				return getPlayerPartyData()
+			end
 		else
-			-- Getting pokemon data outside of battle
 			return getPlayerPartyData()
 		end
 	end
@@ -650,6 +675,7 @@ local function Program(initialTracker, initialMemoryAddresses, initialGameInfo, 
 		battleHandler:updateAllPokemonInBattle()
 		if not battleHandler:isInBattle() and not locked then
 			selectedPlayer = self.SELECTED_PLAYERS.PLAYER
+			inBattlePartyCycle = false -- Reset flag when leaving battle
 		end
 		updatePlayerPokemonData()
 		self.updateEnemyPokemonData()
@@ -807,11 +833,12 @@ local function Program(initialTracker, initialMemoryAddresses, initialGameInfo, 
 	end
 -- Done for now? This is called by the Start Button
 	local function switchPokemonViewToEnemy()
+		inBattlePartyCycle = false -- Reset flag when toggling to enemy
 		local blockingScreenActive = inTrackedPokemonView or inLockedView
 		local lockingActive = (locked and lockedPokemonCopy ~= nil)
 
 		if not battleHandler:isInBattle() then
-			print("Not in battle! Pressing start does nothing.")
+			-- Not in battle, do not allow switching to enemy
 			return
 		end
 
@@ -821,15 +848,20 @@ local function Program(initialTracker, initialMemoryAddresses, initialGameInfo, 
 				return
 			end
 			if selectedPlayer == self.SELECTED_PLAYERS.PLAYER then
-				selectedPlayer = battleHandler:updatePlayerSlotIndex(selectedPlayer)
-				local pokemon = getPlayerPartyData()
-				print("Switched a view from START button")
+				-- Instead of cycling party, just switch to enemy view and reset slot index
+				local activeBattleSlot = 1
+				if battleHandler._battleData and battleHandler._battleData["player"] then
+					activeBattleSlot = battleHandler._battleData["player"].slotIndex or 1
+				end
+				-- Switched to enemy view from START button so reset slot index again
+				battleHandler:setPlayerSlotIndex(activeBattleSlot)
+				selectedPlayer = self.SELECTED_PLAYERS.ENEMY
 			else
 				if locked then
 					selectedPlayer = self.SELECTED_PLAYERS.PLAYER
 				else
+					-- Switched to the player Pokemon from enemy Pokemon
 					selectedPlayer = battleHandler:updateEnemySlotIndex(selectedPlayer)
-					print("Switched from enemy to player mon in battle")
 				end
 			end
 			readMemory()
@@ -837,30 +869,51 @@ local function Program(initialTracker, initialMemoryAddresses, initialGameInfo, 
 		end
 	end
 
--- Specifically for switching through player party
+-- Specifically for switching through player party for in or out of battle
 	local function switchPokemonViewForParty()
 		local blockingScreenActive = inTrackedPokemonView or inLockedView
-		local lockingActive = (locked and lockedPokemonCopy ~= nil)
 		if not blockingScreenActive then
-			if not battleHandler:isAllowedToSwap() then
-				--Pokemon are not out yet
-				return
-			end
-			if selectedPlayer == self.SELECTED_PLAYERS.PLAYER then
-				selectedPlayer = battleHandler:updatePlayerSlotIndex(selectedPlayer) --Is it here?
-				local pokemon = getPlayerPartyData()
-				--print("Pokemon: ", pokemon)
-				print("Switched a view from Select button")
-				if pokemon == nil or next(pokemon) == nil then --Maybe do a check to see the amount of mons in the party are?
-					battleHandler:setPlayerSlotIndex(1)
-					print("Switched back to 1st slot outside of battle?")
-				end
-			else
+			if battleHandler:isInBattle() then
+				-- In battle: cycle through party using a separate index that does not affect battle slots.
+				local party = battleHandler:_getPlayerParty() or {}
+				local partyCount = 0
+				for _, _ in pairs(party) do partyCount = partyCount + 1 end
+				if partyCount == 0 then partyCount = 1 end
+
+				local currentSlot = battleHandler:getPlayerSlotIndex()
+				local nextSlot = currentSlot + 1
+				if nextSlot > partyCount then nextSlot = 1 end
+				battleHandler:setPlayerSlotIndex(nextSlot)
+
 				selectedPlayer = self.SELECTED_PLAYERS.PLAYER
-				print("Make selected player PLAYER")
+
+				-- If the selected slot matches the active slot, exit party cycle mode.
+				local activeBattleSlot = 1
+				if battleHandler._battleData and battleHandler._battleData["player"] then
+					activeBattleSlot = battleHandler._battleData["player"].slotIndex or 1
+				end
+				if nextSlot == activeBattleSlot then
+					inBattlePartyCycle = false
+				else
+					inBattlePartyCycle = true
+				end
+
+				readMemory()
+				resetMainScreenHover()
+			else
+				-- Outside battle working. Don't touch for now?
+				if selectedPlayer == self.SELECTED_PLAYERS.PLAYER then
+					selectedPlayer = battleHandler:updatePlayerSlotIndex(selectedPlayer)
+					local pokemon = getPlayerPartyData()
+					if pokemon == nil or next(pokemon) == nil then
+						battleHandler:setPlayerSlotIndex(1)
+					end
+				else
+					selectedPlayer = self.SELECTED_PLAYERS.PLAYER
+				end
+				readMemory()
+				resetMainScreenHover()
 			end
-			readMemory()
-			resetMainScreenHover()
 		end
 	end
 

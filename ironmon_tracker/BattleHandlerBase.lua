@@ -308,7 +308,6 @@ function BattleHandlerBase:updateEnemySlotIndex(currentSelectedPlayer)
 end
 
 function BattleHandlerBase:setPlayerSlotIndex(newIndex)
-    print("Setting player slot index?")
     self._battleData["player"].slotIndex = newIndex
 end
 
@@ -435,7 +434,13 @@ function BattleHandlerBase:getActivePokemonInBattle(selected)
     if self._program.getSelectedPlayer() == self._program.SELECTED_PLAYERS.PLAYER and isEnemy then
         slotIndex = self:getEnemyEffectivenessSlot()
     end
-    return battlerData.slots[slotIndex].activePokemon
+
+    -- Return the active Pokemon in the current slot, or nil if it doesn't exist
+    if battlerData and battlerData.slots and battlerData.slots[slotIndex] then
+        return battlerData.slots[slotIndex].activePokemon
+    end
+    
+    return nil
 end
 
 function BattleHandlerBase:runEvents()

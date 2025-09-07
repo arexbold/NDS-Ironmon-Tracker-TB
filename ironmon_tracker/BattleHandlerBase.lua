@@ -338,7 +338,8 @@ function BattleHandlerBase:_baseSetUpBattleVariables()
         slots = {},
         battleTeamPIDs = {},
         slotIndex = 1,
-        isEnemy = false
+        isEnemy = false,
+        partyOrder = {1, 2, 3, 4, 5, 6} -- Force order of party slots to read from memory
     }
     self._battleData["enemy"] = {
         partyBase = self.memoryAddresses.enemyBase,
@@ -423,6 +424,31 @@ function BattleHandlerBase:updateAllPokemonInBattle()
                 self:checkEnemyPP(data)
             end
             battlerData.slots[slot].activePokemon = data
+        end
+    end
+
+    -- Detect if the battling Pokemon changed for the player
+    local order = self._battleData["player"].partyOrder
+    local newActiveID = self._battleData["player"].slots[1]
+        and self._battleData["player"].slots[1].activePokemon
+        and self._battleData["player"].slots[1].activePokemon.pokemonID
+
+    -- Then find the Pokemon
+    if newActiveID then
+        local pos
+        for i = 1, #order do
+            local memSlot = order[i]
+            self.pokemonDataReader.setCurrentBase(self.memoryAddresses.playerBattleBase + (memSlot - 1) * self._gameInfo.ENCRYPTED_POKEMON_SIZE)
+            local data = self.pokemonDataReader.decryptPokemonInfo(false, memSlot - 1, false)
+            if data and data.pokemonID == newActiveID then
+                pos = i
+                break
+            end
+        end
+        if pos and pos ~= 1 then
+            -- Move that Pokemon to the front of the order
+            local moved = table.remove(order, pos)
+            table.insert(order, 1, moved)
         end
     end
 end

@@ -449,6 +449,17 @@ local function Program(initialTracker, initialMemoryAddresses, initialGameInfo, 
 
 	local function getPlayerPartyData(indexOffset)
 		local slot = battleHandler:getPlayerSlotIndex() + (indexOffset or 0)
+
+		if battleHandler:isInBattle() and battleHandler.battleData then
+			local partyOrder = battleHandler._battleData["player"].partyOrder
+			local partyIndex = partyOrder[slot] or slot
+			local offset = (partyIndex - 1) * gameInfo.ENCRYPTED_POKEMON_SIZE
+			pokemonDataReader.setCurrentBase(memoryAddresses.playerBattleBase + offset)
+			local data = pokemonDataReader.decryptPokemonInfo(true, 0, false)
+			return data
+		end
+
+		-- Outside battle: use party memory
 		local offset = (slot - 1) * gameInfo.ENCRYPTED_POKEMON_SIZE
 		pokemonDataReader.setCurrentBase(memoryAddresses.playerBase + offset)
 		local data = pokemonDataReader.decryptPokemonInfo(true, 0, false)

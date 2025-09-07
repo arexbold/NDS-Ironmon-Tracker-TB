@@ -1005,25 +1005,44 @@ local function MainScreen(initialSettings, initialTracker, initialProgram)
         ui.controls.pokemonType2.setVisibility(not randomBallPickerActive)
     end
 
+    local cachedPartyBarMons = {}
+
     -- Update all elements of the party bar
     local function updatePartyBar()
         local party = program.getPartyBarMons and program.getPartyBarMons() or {}
+        local inBattle = program.isInBattle and program.isInBattle()
         local currentIconSet = IconSets.SETS[settings.appearance.ICON_SET_INDEX]
+
         for i = 1, 3 do
             local iconLabel = ui.controls["partyIcon" .. i]
             local mon = party[i]
+            local displayMon
+
+            -- Only cache mons outside of battle
+            if not inBattle then
+                if mon and mon.pokemonID and mon.pokemonID ~= 0 then
+                    cachedPartyBarMons[i] = mon -- update cache with actual mon
+                elseif mon and mon.pokemonID == 0 then
+                    cachedPartyBarMons[i] = nil -- clear cache if slot is empty??
+                end
+                displayMon = cachedPartyBarMons[i] or mon
+            else
+                cachedPartyBarMons[i] = nil -- clear cache in battle
+                displayMon = mon
+            end
+
             local isHighlighted = false
-            if mon and mon.pokemonID and mon.pokemonID ~= 0 then
-                DrawingUtils.readPokemonIDIntoImageLabel(currentIconSet, mon.pokemonID, iconLabel, false)
+            if displayMon and displayMon.pokemonID and displayMon.pokemonID ~= 0 then
+                DrawingUtils.readPokemonIDIntoImageLabel(currentIconSet, displayMon.pokemonID, iconLabel, false)
                 iconLabel.setVisibility(true)
                 -- Highlight if this is the currently viewed mon
-                if currentPokemon and mon.pokemonID == currentPokemon.pokemonID then
+                if currentPokemon and displayMon.pokemonID == currentPokemon.pokemonID then
                     isHighlighted = true
                 end
                 -- Put HP bar under icon
                 local hpPercent = 0
-                if mon.curHP and mon.stats and mon.stats.HP and mon.stats.HP > 0 then
-                    hpPercent = math.max(0, math.min(1, mon.curHP / mon.stats.HP))
+                if displayMon.curHP and displayMon.stats and displayMon.stats.HP and displayMon.stats.HP > 0 then
+                    hpPercent = math.max(0, math.min(1, displayMon.curHP / displayMon.stats.HP))
                 end
                 local pos = iconLabel.getPosition()
                 local barY = pos.y + iconLabel.getSize().height + 4

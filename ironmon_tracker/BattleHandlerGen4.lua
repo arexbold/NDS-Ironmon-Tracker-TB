@@ -1,6 +1,35 @@
 BattleHandlerGen4 = BattleHandlerBase:new()
 local FrameCounter = dofile(Paths.FOLDERS.DATA_FOLDER .. "/FrameCounter.lua")
 
+local targetAddressFirstPoke = 0x022629A4
+local targetAddressOtherPokes = 0x0223D20C
+local hookName = "JumpToPokeball"
+local memoryDomain = "ARM9 System Bus"
+
+event.on_bus_exec(
+    function(addr, val, flags)
+        print("Sent out first Poke! Execution detected at address 0x" .. string.format("%X", targetAddressFirstPoke))
+        print("Program Counter: 0x" .. string.format("%X", emu.getregister("PC")))
+        
+    end,
+    targetAddressFirstPoke,
+    hookName,
+    memoryDomain 
+)
+
+event.on_bus_exec(
+    function(addr, val, flags)
+        print("Sent out other Poke! Execution detected at address 0x" .. string.format("%X", targetAddressOtherPokes))
+        print("Program Counter: 0x" .. string.format("%X", emu.getregister("PC")))
+        --TODO: Set a flag here to indicate that the enemy has switched in
+
+        
+    end,
+    targetAddressOtherPokes,
+    hookName,
+    memoryDomain 
+)
+
 function BattleHandlerGen4._readAbilityMessages(self)
     if not self:inBattleAndFetched() or not self.memoryAddresses.battleSubscriptMsgs then
         return

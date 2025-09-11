@@ -1,34 +1,34 @@
 BattleHandlerGen4 = BattleHandlerBase:new()
 local FrameCounter = dofile(Paths.FOLDERS.DATA_FOLDER .. "/FrameCounter.lua")
 
-local targetAddressFirstPoke = 0x022629A4
-local targetAddressOtherPokes = 0x0223D20C
-local hookName = "JumpToPokeball"
-local memoryDomain = "ARM9 System Bus"
+-- local targetAddressFirstPoke = 0x022629A4
+-- local targetAddressOtherPokes = 0x0223D20C
+-- local hookName = "JumpToPokeball"
+-- local memoryDomain = "ARM9 System Bus"
 
-event.on_bus_exec(
-    function(addr, val, flags)
-        print("Sent out first Poke! Execution detected at address 0x" .. string.format("%X", targetAddressFirstPoke))
-        print("Program Counter: 0x" .. string.format("%X", emu.getregister("PC")))
-        
-    end,
-    targetAddressFirstPoke,
-    hookName,
-    memoryDomain 
-)
+-- event.on_bus_exec(
+--     function(addr, val, flags)
+--         print("Sent out first Poke! Execution detected at address 0x" .. string.format("%X", targetAddressFirstPoke))
+--         print("Program Counter: 0x" .. string.format("%X", emu.getregister("PC")))
+--         print("Address value: " .. Memory.read_u16_le(0x022629A4))
+--     end,
+--     targetAddressFirstPoke,
+--     hookName,
+--     memoryDomain
+-- )
 
-event.on_bus_exec(
-    function(addr, val, flags)
-        print("Sent out other Poke! Execution detected at address 0x" .. string.format("%X", targetAddressOtherPokes))
-        print("Program Counter: 0x" .. string.format("%X", emu.getregister("PC")))
-        --TODO: Set a flag here to indicate that the enemy has switched in
-
-        
-    end,
-    targetAddressOtherPokes,
-    hookName,
-    memoryDomain 
-)
+-- event.on_bus_exec(
+--     function(addr, val, flags)
+--         print("Sent out other Poke! Execution detected at address 0x" .. string.format("%X", targetAddressOtherPokes))
+--         print("Program Counter: 0x" .. string.format("%X", emu.getregister("PC")))
+--         -- Handle the flag that indicates a Pokemon has switched in
+--         BattleHandlerGen4._monRecentlyDeadAwaitingNew = false -- This may not work due to weird code structure
+--         print(Memory.read_u16_le(0x0223D20C))
+--     end,
+--     targetAddressOtherPokes,
+--     hookName,
+--     memoryDomain
+-- )
 
 function BattleHandlerGen4._readAbilityMessages(self)
     if not self:inBattleAndFetched() or not self.memoryAddresses.battleSubscriptMsgs then
@@ -226,3 +226,37 @@ function BattleHandlerGen4:_getPokemonData(battleData, slotIndex, isEnemy)
     battler.lastValidPID = activePID
     return data
 end
+
+---Returns true if it's okay to read battle data
+---@return boolean
+function BattleHandlerGen4:canReadData()
+	-- Don't allow reading new battle data if a Pokemon recently died; wait until a new mon is sent out
+	return not self._monRecentlyDeadAwaitingNew
+end
+
+function BattleHandlerGen4:updateFlags()
+	-- Don't bother updating if not in a battle
+	if not self:isInBattle() then
+		return
+	end
+
+	-- Flags for a Pokemon dying recently and before a new Pokemon is sent out to replace it
+	if not self._monRecentlyDeadAwaitingNew then
+		-- After a mon dies, prevent data reads until mons get sent out
+		local msgId = Memory.read_u16_le(self.memoryAddresses.battleSubscriptMsgs) or -1
+		if msgId == 6 then -- 6: special value for any mon dying
+			print(string.format("[DEBUG] Mon recently died!"))
+			self._monRecentlyDeadAwaitingNew = true
+		end
+	else
+		-- When a [real] condition is met to automatically unblock the data read, clear the flag to allow data again
+		if false then -- TODO: replace with some real condition
+			self._monRecentlyDeadAwaitingNew = false
+		end
+	end
+end
+
+function BattleHandlerGen4:clearFlagRecentMonDeath()
+	self._monRecentlyDeadAwaitingNew = false
+end
+

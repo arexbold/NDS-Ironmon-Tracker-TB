@@ -470,7 +470,7 @@ local function Program(initialTracker, initialMemoryAddresses, initialGameInfo, 
 	function self.getPartyBarMons()
 		local mons = {}
 		local inBattle = self.isInBattle and self.isInBattle()
-		local base = inBattle and memoryAddresses.playerBattleBase or memoryAddresses.playerBase 
+		local base = inBattle and memoryAddresses.playerBattleBase or memoryAddresses.playerBase
 		for i = 1, 3 do
 			local offset = (i - 1) * gameInfo.ENCRYPTED_POKEMON_SIZE
 			pokemonDataReader.setCurrentBase(base + offset)
@@ -542,7 +542,7 @@ local function Program(initialTracker, initialMemoryAddresses, initialGameInfo, 
 				-- If not the active slot, or activeData is nil, return party data
 				return getPlayerPartyData()
 			end
-			
+
 			-- Only for Start button or normal battle switching
 			local activeData = battleHandler:getActivePokemonInBattle(selected)
 			if activeData ~= nil then
@@ -697,6 +697,11 @@ local function Program(initialTracker, initialMemoryAddresses, initialGameInfo, 
 		refreshPointers()
 		updateLocation()
 		battleHandler:updateBattleStatus()
+		battleHandler:updateFlags()
+		if battleHandler:isInBattle() and not battleHandler:canReadData() then
+			-- Prevent data reads under certain conditions (right now, an enemy mon faints)
+			return
+		end
 		battleHandler:updateAllPokemonInBattle()
 		if not battleHandler:isInBattle() and not locked then
 			selectedPlayer = self.SELECTED_PLAYERS.PLAYER
@@ -942,6 +947,12 @@ local function Program(initialTracker, initialMemoryAddresses, initialGameInfo, 
 		end
 	end
 
+	local function forceUpdateBattleData()
+		if battleHandler ~= nil then
+			battleHandler:clearFlagRecentMonDeath()
+		end
+	end
+
 	local function lockEnemy()
 		if battleHandler:inBattleAndFetched() and enemyPokemon ~= nil and settings.battle.ENABLE_ENEMY_LOCKING then
 			locked = true
@@ -972,7 +983,8 @@ local function Program(initialTracker, initialMemoryAddresses, initialGameInfo, 
 
 		-- NEW: cycle party everywhere (overworld and battle) without touching battle slots
 		JoypadEventListener(settings.controls, "CYCLE_PARTY", switchPokemonViewForParty),
-
+		-- NEW: manually clear the data read block during battle
+		JoypadEventListener(settings.controls, "UPDATE_BATTLE", forceUpdateBattleData),
 	}
 
 	function self.setCurrentScreens(newScreens)
@@ -1113,9 +1125,15 @@ local function Program(initialTracker, initialMemoryAddresses, initialGameInfo, 
 		frameCounters.networkStartup = nil
 	end
 
+	local function readBattleFlags()
+		battleHandler:updateFlags()
+	end
+
 	frameCounters = {
 		restorePointUpdate = FrameCounter(30, updateRestorePoints),
 		memoryReading = FrameCounter(30, readMemory, nil, true),
+		-- Read battle flags more frequently to catch special conditions
+		battleFlagsReading = FrameCounter(10, readBattleFlags, nil, true),
 		trackerSaving = FrameCounter(
 			18000,
             function()

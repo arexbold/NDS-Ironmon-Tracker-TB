@@ -26,7 +26,9 @@ BattleHandlerBase = {
     _defeatedTrainerList = {},
     _totalBattlesCompleted = 0,
     _allowedToSwap = true,
-    _firstPoke = true
+    _firstPoke = true,
+    -- Custom tracking flags for new mon being sent out
+    _monRecentlyDeadAwaitingNew = false,
 }
 
 function BattleHandlerBase:new(o, gameInfo, memoryAddresses, pokemonDataReader, tracker, program, settings)
@@ -41,6 +43,7 @@ function BattleHandlerBase:new(o, gameInfo, memoryAddresses, pokemonDataReader, 
 
     self._inBattle = false
     self._battleDataFetched = false
+    self._monRecentlyDeadAwaitingNew = false
 
     self._joypadEvents = {}
 
@@ -351,6 +354,7 @@ function BattleHandlerBase:_baseSetUpBattleVariables()
     }
     self._frameCounters["fetchBattleData"] = FrameCounter(60, self._onBattleFetchFrameCounter, self)
     self._multiPlayerDouble = false
+    self._monRecentlyDeadAwaitingNew = false
 end
 
 function BattleHandlerBase:_onEndOfBattle()
@@ -465,7 +469,7 @@ function BattleHandlerBase:getActivePokemonInBattle(selected)
     if battlerData and battlerData.slots and battlerData.slots[slotIndex] then
         return battlerData.slots[slotIndex].activePokemon
     end
-    
+
     return nil
 end
 
@@ -493,4 +497,17 @@ function BattleHandlerBase:updateStatStages()
 end
 
 function BattleHandlerBase:_isTransformed()
+end
+
+---Returns true if it's okay to read battle data
+---@return boolean
+function BattleHandlerBase:canReadData()
+	-- By default, return true unless a different handler specifies otherwise
+	return true
+end
+
+function BattleHandlerBase:updateFlags()
+end
+
+function BattleHandlerBase:clearFlagRecentMonDeath()
 end

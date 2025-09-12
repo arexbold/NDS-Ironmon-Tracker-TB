@@ -35,7 +35,6 @@ MiscConstants.DEFAULT_SETTINGS = {
         LEFT_EFFECTIVENESS = "L",
         RIGHT_EFFECTIVENESS = "R",
         CYCLE_PARTY = "Select",
-        UPDATE_BATTLE = "Start",
     },
     battle = {
         AUTO_SWAP_TO_ENEMY = false,

@@ -947,12 +947,6 @@ local function Program(initialTracker, initialMemoryAddresses, initialGameInfo, 
 		end
 	end
 
-	local function forceUpdateBattleData()
-		if battleHandler ~= nil then
-			battleHandler:clearFlagRecentMonDeath()
-		end
-	end
-
 	local function lockEnemy()
 		if battleHandler:inBattleAndFetched() and enemyPokemon ~= nil and settings.battle.ENABLE_ENEMY_LOCKING then
 			locked = true
@@ -983,8 +977,6 @@ local function Program(initialTracker, initialMemoryAddresses, initialGameInfo, 
 
 		-- NEW: cycle party everywhere (overworld and battle) without touching battle slots
 		JoypadEventListener(settings.controls, "CYCLE_PARTY", switchPokemonViewForParty),
-		-- NEW: manually clear the data read block during battle
-		--JoypadEventListener(settings.controls, "UPDATE_BATTLE", forceUpdateBattleData),
 	}
 
 	function self.setCurrentScreens(newScreens)

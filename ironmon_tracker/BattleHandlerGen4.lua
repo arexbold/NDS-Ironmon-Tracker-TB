@@ -257,8 +257,3 @@ function BattleHandlerGen4:updateFlags()
 		end
 	end
 end
-
-function BattleHandlerGen4:clearFlagRecentMonDeath()
-	self._monRecentlyDeadAwaitingNew = false
-end
-

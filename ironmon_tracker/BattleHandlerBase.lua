@@ -508,6 +508,3 @@ end
 
 function BattleHandlerBase:updateFlags()
 end
-
-function BattleHandlerBase:clearFlagRecentMonDeath()
-end

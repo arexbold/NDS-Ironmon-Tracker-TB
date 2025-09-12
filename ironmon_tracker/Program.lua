@@ -984,7 +984,7 @@ local function Program(initialTracker, initialMemoryAddresses, initialGameInfo, 
 		-- NEW: cycle party everywhere (overworld and battle) without touching battle slots
 		JoypadEventListener(settings.controls, "CYCLE_PARTY", switchPokemonViewForParty),
 		-- NEW: manually clear the data read block during battle
-		JoypadEventListener(settings.controls, "UPDATE_BATTLE", forceUpdateBattleData),
+		--JoypadEventListener(settings.controls, "UPDATE_BATTLE", forceUpdateBattleData),
 	}
 
 	function self.setCurrentScreens(newScreens)

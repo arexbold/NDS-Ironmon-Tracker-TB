@@ -47,6 +47,7 @@ MemoryAddresses[GameInfo.VERSION_NUMBER.HEART_GOLD] = {
         repelSteps = 0x6919,
         battleSubscriptMsgs = 0x47184,
         abilityMessage = 0x471C8,
+        enemySentOutMsg = 0x701EC, -- new
         dayOfWeek = 0xDF4
     },
     GLOBAL = {

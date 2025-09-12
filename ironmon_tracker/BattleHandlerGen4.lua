@@ -186,6 +186,7 @@ function BattleHandlerGen4:_getPokemonData(battleData, slotIndex, isEnemy)
     if not self:inBattleAndFetched() then
         return
     end
+
     local battlers = battleData.slots
     local battler = battlers[slotIndex]
     local currentBase = battleData.partyBase
@@ -245,12 +246,13 @@ function BattleHandlerGen4:updateFlags()
 		-- After a mon dies, prevent data reads until mons get sent out
 		local msgId = Memory.read_u16_le(self.memoryAddresses.battleSubscriptMsgs) or -1
 		if msgId == 6 then -- 6: special value for any mon dying
-			print(string.format("[DEBUG] Mon recently died!"))
+			--print(string.format("[DEBUG] Mon recently died!"))
 			self._monRecentlyDeadAwaitingNew = true
 		end
 	else
 		-- When a [real] condition is met to automatically unblock the data read, clear the flag to allow data again
-		if false then -- TODO: replace with some real condition
+        local sentOutMsgId = Memory.read_u16_le(self.memoryAddresses.enemySentOutMsg) or -1
+		if sentOutMsgId == 0x4d7c then
 			self._monRecentlyDeadAwaitingNew = false
 		end
 	end

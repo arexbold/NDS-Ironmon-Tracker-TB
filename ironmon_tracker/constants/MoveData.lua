@@ -317,9 +317,9 @@ MoveData.MOVES_MASTER_LIST = {
 		id = "20",
 		name = "Bind",
 		type = PokemonData.POKEMON_TYPES.NORMAL,
-		power = "15",
+		power = "30",
 		pp = "20",
-		accuracy = {"75", "75", "75", "75", "85"},
+		accuracy = {"90", "90", "90", "90", "90"},
 		category = MoveData.MOVE_CATEGORIES.PHYSICAL,
 		description = {
 			"Makes contact. For the next 2-5 turns, the target cannot leave the field and is damaged for 1/16 its max HP at the end of each turn.",
@@ -485,10 +485,10 @@ MoveData.MOVES_MASTER_LIST = {
 	{
 		id = "35",
 		name = "Wrap",
-		type = PokemonData.POKEMON_TYPES.NORMAL,
-		power = "15",
+		type = PokemonData.POKEMON_TYPES.GRASS,
+		power = "30",
 		pp = "20",
-		accuracy = {"85", "85", "85", "85", "90"},
+		accuracy = {"90", "90", "90", "90", "90"},
 		category = MoveData.MOVE_CATEGORIES.PHYSICAL,
 		description = {
 			"Makes contact. For the next 2-5 turns, the target cannot leave the field and is damaged for 1/16 its max HP at the end of each turn.",
@@ -871,7 +871,7 @@ MoveData.MOVES_MASTER_LIST = {
 		pp = {"20", "20", "20", "25", "25"},
 		accuracy = "100",
 		category = MoveData.MOVE_CATEGORIES.SPECIAL,
-		description = "Inflicts regular damage. Drains half the damage inflicted to heal the user."
+		description = "Inflicts regular damage. Drains 20% of the damage inflicted to heal the user."
 	},
 	{
 		id = "72",
@@ -881,7 +881,7 @@ MoveData.MOVES_MASTER_LIST = {
 		pp = {"8", "8", "8", "8", "8"},
 		accuracy = "100",
 		category = MoveData.MOVE_CATEGORIES.SPECIAL,
-		description = "Inflicts regular damage. Drains half the damage inflicted to heal the user."
+		description = "Inflicts regular damage. Drains 20% of the damage inflicted to heal the user."
 	},
 	{
 		id = "73",
@@ -994,9 +994,9 @@ MoveData.MOVES_MASTER_LIST = {
 		id = "83",
 		name = "Fire Spin",
 		type = PokemonData.POKEMON_TYPES.FIRE,
-		power = {"15", "15", "15", "15", "35"},
+		power = {"30", "30", "30", "30", "30"},
 		pp = "15",
-		accuracy = {"70", "70", "70", "70", "85"},
+		accuracy = {"90", "90", "90", "90", "90"},
 		category = MoveData.MOVE_CATEGORIES.SPECIAL,
 		description = {
 			"For the next 2-5 turns, the target cannot leave the field and is damaged for 1/16 its max HP at the end of each turn.",
@@ -1420,7 +1420,7 @@ MoveData.MOVES_MASTER_LIST = {
 		id = "122",
 		name = "Lick",
 		type = PokemonData.POKEMON_TYPES.GHOST,
-		power = "20",
+		power = "30",
 		pp = "30",
 		accuracy = "100",
 		category = MoveData.MOVE_CATEGORIES.PHYSICAL,
@@ -1430,11 +1430,11 @@ MoveData.MOVES_MASTER_LIST = {
 		id = "123",
 		name = "Smog",
 		type = PokemonData.POKEMON_TYPES.POISON,
-		power = "20",
+		power = "30",
 		pp = "20",
-		accuracy = "70",
+		accuracy = "85",
 		category = MoveData.MOVE_CATEGORIES.SPECIAL,
-		description = "Inflicts regular damage. Has a 40% chance to poison the target."
+		description = "Inflicts regular damage. Has a 25% chance to poison the target."
 	},
 	{
 		id = "124",
@@ -1591,7 +1591,7 @@ MoveData.MOVES_MASTER_LIST = {
 		accuracy = "100",
 		category = MoveData.MOVE_CATEGORIES.SPECIAL,
 		description = "Fails if not used on a sleeping Pok" ..
-			Chars.accentedE .. "mon. Inflicts regular damage. Drains half the damage inflicted to heal the user."
+			Chars.accentedE .. "mon. Inflicts regular damage. Drains 20% of the damage inflicted to heal the user."
 	},
 	{
 		id = "139",
@@ -1617,11 +1617,11 @@ MoveData.MOVES_MASTER_LIST = {
 		id = "141",
 		name = "Leech Life",
 		type = PokemonData.POKEMON_TYPES.BUG,
-		power = "20",
+		power = "40",
 		pp = "15",
 		accuracy = "100",
 		category = MoveData.MOVE_CATEGORIES.PHYSICAL,
-		description = "Inflicts regular damage and makes contact. Drains half the damage inflicted to heal the user."
+		description = "Inflicts regular damage and makes contact. Drains 20% of the damage inflicted to heal the user."
 	},
 	{
 		id = "142",
@@ -2268,7 +2268,7 @@ MoveData.MOVES_MASTER_LIST = {
 		pp = {"5", "5", "5", "5", "5"},
 		accuracy = "100",
 		category = MoveData.MOVE_CATEGORIES.SPECIAL,
-		description = "Inflicts regular damage. Drains half the damage inflicted to heal the user."
+		description = "Inflicts regular damage. Drains 20% of the damage inflicted to heal the user."
 	},
 	{
 		id = "203",
@@ -2774,9 +2774,9 @@ MoveData.MOVES_MASTER_LIST = {
 		id = "250",
 		name = "Whirlpool",
 		type = PokemonData.POKEMON_TYPES.WATER,
-		power = {"15", "15", "15", "15", "35"},
+		power = {"35", "35", "35", "35", "35"},
 		pp = "15",
-		accuracy = {"70", "70", "70", "70", "85"},
+		accuracy = {"95", "95", "95", "95", "95"},
 		category = MoveData.MOVE_CATEGORIES.SPECIAL,
 		description = {
 			"For the next 2-5 turns, the target cannot leave the field and is damaged for 1/16 its max HP at the end of each turn.",
@@ -3653,9 +3653,9 @@ MoveData.MOVES_MASTER_LIST = {
 		id = "328",
 		name = "Sand Tomb",
 		type = PokemonData.POKEMON_TYPES.GROUND,
-		power = {"15", "15", "15", "15", "35"},
+		power = {"30", "30", "30", "30", "30"},
 		pp = "15",
-		accuracy = {"70", "70", "70", "70", "85"},
+		accuracy = {"90", "90", "90", "90", "90"},
 		category = MoveData.MOVE_CATEGORIES.PHYSICAL,
 		description = {
 			"For the next 2-5 turns, the target cannot leave the field and is damaged for 1/16 its max HP at the end of each turn.",
@@ -3780,8 +3780,8 @@ MoveData.MOVES_MASTER_LIST = {
 		name = "Bounce",
 		type = PokemonData.POKEMON_TYPES.FLYING,
 		power = "85",
-		pp = "5",
-		accuracy = "85",
+		pp = "10",
+		accuracy = "90",
 		category = MoveData.MOVE_CATEGORIES.PHYSICAL,
 		description = "Inflicts regular damage and makes contact. User bounces high into the air for one turn, becoming immune to attack, and hits on the second turn. Has a 30% chance to paralyze the target."
 	},
@@ -4534,7 +4534,7 @@ MoveData.MOVES_MASTER_LIST = {
 		pp = {"5", "5", "5", "5", "10"},
 		accuracy = "100",
 		category = MoveData.MOVE_CATEGORIES.PHYSICAL,
-		description = "Inflicts regular damage and makes contact. Drains half the damage inflicted to heal the user."
+		description = "Inflicts regular damage and makes contact. Drains 20% of the damage inflicted to heal the user."
 	},
 	{
 		id = "410",
@@ -5806,7 +5806,7 @@ MoveData.MOVES_MASTER_LIST = {
 		pp = "10",
 		accuracy = "100",
 		category = MoveData.MOVE_CATEGORIES.PHYSICAL,
-		description = "Inflicts regular damage and makes contact. Drains half the damage inflicted to heal the user."
+		description = "Inflicts regular damage and makes contact. Drains 20% of the damage inflicted to heal the user."
 	},
 	{
 		id = "533",

@@ -698,10 +698,6 @@ local function Program(initialTracker, initialMemoryAddresses, initialGameInfo, 
 		updateLocation()
 		battleHandler:updateBattleStatus()
 		battleHandler:updateFlags()
-		if battleHandler:isInBattle() and not battleHandler:canReadData() then
-			-- Prevent data reads under certain conditions (right now, an enemy mon faints)
-			return
-		end
 		battleHandler:updateAllPokemonInBattle()
 		if not battleHandler:isInBattle() and not locked then
 			selectedPlayer = self.SELECTED_PLAYERS.PLAYER

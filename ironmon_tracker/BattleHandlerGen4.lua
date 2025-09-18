@@ -212,7 +212,7 @@ function BattleHandlerGen4:_getPokemonData(battleData, slotIndex, isEnemy)
             end
         end
     end
-    if data == nil then
+    if data == nil or not self:canRevealData(isEnemy) then
         return battler.lastValidPokemon
     end
     self:_updateStatStages(data, slotIndex, isEnemy)
@@ -228,10 +228,14 @@ function BattleHandlerGen4:_getPokemonData(battleData, slotIndex, isEnemy)
     return data
 end
 
----Returns true if it's okay to read battle data
+---Returns true if it's okay for enemy trainer pokemon data to be revealed to the player
 ---@return boolean
-function BattleHandlerGen4:canReadData()
-	-- Don't allow reading new battle data if a Pokemon recently died; wait until a new mon is sent out
+function BattleHandlerGen4:canRevealData(isEnemy)
+	-- Okay to reveal the player's Pokémon
+	if not isEnemy then
+		return true
+	end
+	-- Otherwise, don't reveal if a mon recently died (flag clears when new mon is sent out)
 	return not self._monRecentlyDeadAwaitingNew
 end
 

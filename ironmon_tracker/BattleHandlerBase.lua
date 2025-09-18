@@ -499,9 +499,9 @@ end
 function BattleHandlerBase:_isTransformed()
 end
 
----Returns true if it's okay to read battle data
+---Returns true if it's okay for enemy trainer pokemon data to be revealed to the player
 ---@return boolean
-function BattleHandlerBase:canReadData()
+function BattleHandlerBase:canRevealData(isEnemy)
 	-- By default, return true unless a different handler specifies otherwise
 	return true
 end

@@ -4,6 +4,8 @@
 
 This fork was made to tweak the NDS Ironmon Tracker in order to make it more suitable for the Triple Bond Challenge. **All credit goes to Brian0255 (OnlySpaghettiCode) and contributors for all their work.**
 
+HUGE THANKS to OnlySpaghettiCode, UTDZac, and Mixone for helping make this compatible with the challenge.
+
 If you're looking for the ACTUAL NDS Ironmon Tracker go here: [release page](https://github.com/Brian0255/NDS-Ironmon-Tracker/releases) for changelogs and downloads.
 
 ## Installation

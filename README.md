@@ -23,7 +23,7 @@ If you're looking for the ACTUAL NDS Ironmon Tracker go here: [release page](htt
 4. Load your ROM into [BizHawk](https://tasvideos.org/BizHawk/ReleaseHistory).
 5. Open the Lua Console (Tools -> Lua Console). Click on the folder icon and open `Ironmon_Tracker.lua` in the location you extracted it to.
    - If you installed the tracker in Bizhawk's `Lua` folder, this location is shown by default and you should see the `Ironmon_Tracker.lua` file right away.
-6. Make sure you do the correct settings in the New Run Settings
+6. Make sure you do the correct settings in the New Run Settings. The ROM to randomize is the PATCHED rom after you use this [patch](https://github.com/arexbold/TripleBondChallenge/releases/)
 7. Once they're set, do your New Run Combo to randomize your first seed.
 ## <img width="375" height="803" alt="image" src="https://github.com/user-attachments/assets/5f6f07d9-c482-4e06-9351-b71d933cce01" />
 

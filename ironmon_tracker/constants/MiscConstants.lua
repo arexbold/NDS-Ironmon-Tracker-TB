@@ -78,10 +78,10 @@ MiscConstants.DEFAULT_SETTINGS = {
         SETTINGS_PATH = ""
     },
     badgesAppearance = {
-        SINGLE_BADGE_ALIGNMENT = "RIGHT",
+        SINGLE_BADGE_ALIGNMENT = "BELOW",
         DOUBLE_BADGE_ALIGNMENT = "LEFT_AND_RIGHT",
-        SHOW_BOTH_BADGES = true,
-        SPACER = true,
+        SHOW_BOTH_BADGES = false,
+        SPACER = false,
         PRIMARY_BADGE_SET = "JOHTO"
     },
     automaticUpdates = {

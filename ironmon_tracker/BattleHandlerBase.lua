@@ -295,7 +295,7 @@ function BattleHandlerBase:updatePlayerSlotIndex(currentSelectedPlayer)
         return currentSelectedPlayer
     end
     local limit = #self._battleData["player"].slots
-    if self._settings.battle.DOUBLES_MODE and not self._inBattle then -- NEW TODO: Change limit to 6 and take out if doubles mode or rename it??
+    if not self._inBattle then
         --This limit only happens when outside of battle
         limit = 6
     end

@@ -265,7 +265,7 @@ function BattleHandlerBase:checkEnemyPP(enemy)
         local currentPP = enemy.movePPs[i]
         local maxPP = data.pp
         if data.id ~= "---" then
-            if currentPP < tonumber(maxPP) then
+            if tonumber(currentPP) < tonumber(maxPP) then
                 self._tracker.trackMove(enemy.pokemonID, moveID, enemy.level)
             end
         end

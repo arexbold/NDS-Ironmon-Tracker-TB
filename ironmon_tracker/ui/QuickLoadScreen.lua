@@ -49,9 +49,8 @@ local function TrackerSetupScreen(initialSettings, initialTracker, initialProgra
         local settingKey = settingData.settingKey
         local fileExtension = settingData.fileExtension
         local relativePath = settingData.relativePath
-        local batchValid = isBatchButton and settings.quickLoad.LOAD_TYPE == "USE_BATCH"
         local romGenerationValid = (not isBatchButton) and settings.quickLoad.LOAD_TYPE == "GENERATE_ROMS"
-        if batchValid or romGenerationValid then
+        if romGenerationValid then
             local current_dir = Paths.CURRENT_DIRECTORY
             local newPath = forms.openfile("*" .. fileExtension, current_dir .. relativePath)
             if newPath ~= nil and newPath ~= "" then
@@ -386,53 +385,13 @@ local function TrackerSetupScreen(initialSettings, initialTracker, initialProgra
         )
         local setting = "LOAD_TYPE"
         local typeSettings = {
-            ["USE_BATCH"] = "Use batch of seeds",
             ["GENERATE_ROMS"] = "Generate ROMs"
         }
-        local order = {"USE_BATCH", "GENERATE_ROMS"}
+        local order = {"GENERATE_ROMS"}
         for _, settingValue in pairs(order) do
             createTypeChooseRadioButtonRow(setting, settingValue, typeSettings[settingValue])
         end
         createQuickLoadComboFrame()
-    end
-
-    local function createBatchSetupFrame()
-        ui.frames.mainBatchFrame =
-            Frame(
-            Box(
-                {x = Graphics.SIZES.SCREEN_WIDTH, y = 0},
-                {
-                    width = Graphics.SIZES.MAIN_SCREEN_WIDTH - 2 * Graphics.SIZES.BORDER_MARGIN,
-                    height = constants.BATCH_SETUP_FRAME_HEIGHT
-                },
-                "Top box background color",
-                "Top box border color"
-            ),
-            Layout(Graphics.ALIGNMENT_TYPE.VERTICAL, 5, {x = 0, y = 0}),
-            ui.frames.mainFrame
-        )
-        ui.controls.mainHeading =
-            TextLabel(
-            Component(
-                ui.frames.mainBatchFrame,
-                Box(
-                    {x = 0, y = 0},
-                    {
-                        width = Graphics.SIZES.MAIN_SCREEN_WIDTH - 2 * Graphics.SIZES.BORDER_MARGIN,
-                        height = constants.TEXT_HEADER_HEIGHT
-                    },
-                    "Top box background color",
-                    "Top box border color",
-                    false
-                )
-            ),
-            TextField(
-                "Batch Setup",
-                {x = 36, y = 1},
-                TextStyle(13, Graphics.FONT.DEFAULT_FONT_FAMILY, "Top box text color", "Top box background color")
-            )
-        )
-        createPathSetupFrame(ui.frames.mainBatchFrame, "ROMs Folder", "ROMS_FOLDER_PATH", ".nds", "", true, true)
     end
 
     local function saveProfile(filePath)
@@ -641,7 +600,6 @@ local function TrackerSetupScreen(initialSettings, initialTracker, initialProgra
             )
         )
         createChooseTypeFrame()
-        createBatchSetupFrame()
         createROMCreationFrame()
         createSaveLoadButtons()
         ui.frames.goBackFrame =
@@ -694,7 +652,6 @@ local function TrackerSetupScreen(initialSettings, initialTracker, initialProgra
 
     function self.show()
         ui.frames.mainROMGenerateFrame.setVisibility(settings.quickLoad.LOAD_TYPE == "GENERATE_ROMS")
-        ui.frames.mainBatchFrame.setVisibility(settings.quickLoad.LOAD_TYPE == "USE_BATCH")
         calculateMainFrameSize()
         ui.frames.mainFrame.show()
     end

@@ -1,12 +1,10 @@
 QuickLoader = {}
 
 local attempts = {
-    ["USE_BATCH"] = 0,
     ["GENERATE_ROMS"] = 0
 }
 
 local attemptsPaths = {
-    ["USE_BATCH"] = nil,
     ["GENERATE_ROMS"] = nil
 }
 
@@ -23,9 +21,6 @@ local function initAttemptsPaths()
 
     local name, digits = romname:match("(.-)(%d+)")
     romNumber = digits
-    if name ~= nil and digits ~= nil then
-        attemptsPaths["USE_BATCH"] = attemptsPath .. name .. ".txt"
-    end
 
     local settings = FormsUtils.getFileNameFromPath(quickLoadSettings.SETTINGS_PATH:sub(1, -6))
     if settings ~= nil then
@@ -138,57 +133,12 @@ local function generateROM()
     }
 end
 
-local function getNextRomPathFromBatch()
-    if quickLoadSettings.ROMS_FOLDER_PATH == nil or quickLoadSettings.ROMS_FOLDER_PATH == "" then
-        local message = "ROMS_FOLDER_PATH is not set. Please set this in the tracker's settings."
-        FormsUtils.displayError(message)
-        return nil
-    end
-
-    local romName = gameinfo.getromname()
-    local nameWithoutNumbers, newRomNumber = romName:match("(.-)(%d+)")
-    newRomNumber = tonumber(newRomNumber, 10)
-
-    if newRomNumber == nil then
-        local message = "Current ROM does not have any numbers in its name, unable to load next seed."
-        FormsUtils.displayError(message)
-        return nil
-    end
-
-    local nextRomName = romName:gsub(newRomNumber, tostring(newRomNumber + 1))
-    local nextRomPath = quickLoadSettings.ROMS_FOLDER_PATH .. Paths.SLASH .. nextRomName .. ".nds"
-
-    local fileCheck = io.open(nextRomPath, "r")
-    if fileCheck ~= nil then
-        io.close(fileCheck)
-    else
-        nextRomName = nextRomName:gsub(" ", "_")
-        nextRomPath = quickLoadSettings.ROMS_FOLDER_PATH .. Paths.SLASH .. nextRomName .. ".nds"
-        fileCheck = io.open(nextRomPath, "r")
-        if fileCheck == nil then
-            local message = "Unable to locate next ROM file to load."
-            FormsUtils.displayError(message)
-            return nil
-        else
-            io.close(fileCheck)
-        end
-    end
-
-    incrementAttempts(nameWithoutNumbers)
-
-    return {
-        name = nextRomName,
-        path = nextRomPath
-    }
-end
-
 function QuickLoader.loadNextRom()
     initAttemptsPaths()
     readAttempts()
     if quickLoadSettings.LOAD_TYPE == "GENERATE_ROMS" then
         return generateROM()
     end
-    return getNextRomPathFromBatch()
 end
 
 local function onAttemptsSet(newAttempts, UICallback)

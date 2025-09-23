@@ -160,7 +160,8 @@ local function AppearanceOptionsScreen(initialSettings, initialTracker, initialP
             colorThemeButton = {name = "Edit Color Theme", iconName = "PAINTBRUSH"},
             pokemonIconsButton = {name = "Pok" .. Chars.accentedE .. "mon Icon Sets", iconName = "POKEBALL"}
         }
-        local order = {"pokemonIconsButton", "badgesAppearanceButton", "colorThemeButton"}
+        --local order = {"pokemonIconsButton", "badgesAppearanceButton", "colorThemeButton"} -- Hiding the button for now because this breaks the Triple Bond party viewer
+        local order = {"pokemonIconsButton", "colorThemeButton"}
         for i, key in pairs(order) do
             local button = buttons[key]
             local text = button.name

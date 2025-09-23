@@ -20,8 +20,8 @@ local function TrackerUpdater(initialSettings)
     end
 
     local function runBatchCommand()
-        local archiveName = "NDS-Ironmon-Tracker-main.tar.gz"
-        local folderName = "NDS-Ironmon-Tracker-main"
+        local archiveName = "TripleBondTracker-main.tar.gz"
+        local folderName = "TripleBondTracker-main"
 
         local TAR_URL = "https://github.com/arexbold/TripleBondTracker/archive/main.tar.gz"
 
@@ -99,11 +99,12 @@ local function TrackerUpdater(initialSettings)
     end
 
     local function updateLatestVersion()
-        local versionURL = "https://api.github.com/repos/arexbold/TripleBondTracker/releases/latest"
+        local versionURL = "https://api.github.com/repos/arexbold/TripleBondTracker/releases"
         local command = "curl " .. versionURL .. " --ssl-no-revoke"
         local response = MiscUtils.runExecuteCommand(command)
         if response ~= nil and response ~= "" then
-            local latestVersionString = string.match(response, '"tag_name":.*(%d+%.%d+%.%d+)"')
+            -- Get the first release (most recent, including pre-releases)
+            local latestVersionString = string.match(response, '"tag_name":.*"v?(%d+%.%d+%.%d+)"')
             latestVersion = parseVersionNumber(latestVersionString)
         end
     end
